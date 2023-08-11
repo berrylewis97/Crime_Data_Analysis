@@ -1,6 +1,5 @@
 # Crime_Data_Analysis
 
-Introduction
 This repository contains the code and data for analyzing and visualizing crime data. The analysis focuses on understanding crime trends, patterns, and correlations using various statistical and machine learning techniques.
 
 Dataset
