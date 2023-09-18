@@ -37,6 +37,18 @@ data['Occ_Time'] = pd.to_datetime(data["Occ_Time"],format = "%H:%M").dt.time
 #adding an hour column
 data["Occ_Hour"] = data["Occ_Time"].astype('str').str[:2]
 
+#fixing age column
+data = data[data['Vict_Age'].between(0,100)]
+data['Vict_Age'] = np.where(data['Vict_Age'] == 0,round(data['Vict_Age'].mean()),data['Vict_Age'])
+data['Vict_Age'].value_counts()
+
+#removing unknown genders
+data = data[data['Vict_Sex'].isin(['M','F'])]
+
+#fixing race column
+data = data[data['Vict_Descent'] != '-']
+data.dropna(subset = 'Vict_Descent',inplace = True)
+data
 
 #Converting catagorical columns into category dtype
 
@@ -54,7 +66,7 @@ for column in data.columns:
 
 #Makind File_Number More readable
 data = data.sort_values(by = 'Report_Date').reset_index(drop = True)
-data['File_Number'] = [i.zfill(6) for i in np.arange(0,770787).astype('str')]
+data['File_Number'] = [i.zfill(6) for i in np.arange(0,603684).astype('str')]
 
 
 #Orgenazing The Data into Tables
@@ -108,6 +120,7 @@ Fact = Fact.merge(Dim_LON,on = 'LON').merge(Dim_LAT,on = 'LAT').sort_values(by =
 Dim_Date = pd.DataFrame({"Report_Date":pd.date_range(start=Fact['Report_Date'].min(),end=Fact['Report_Date'].max())})
 
 Dim_Date['year'] = Dim_Date['Report_Date'].dt.year
+Dim_Date['Quarter'] = Dim_Date['Report_Date'].dt.quarter
 Dim_Date['month'] = Dim_Date['Report_Date'].dt.month
 Dim_Date['Day'] = Dim_Date['Report_Date'].dt.day
 
@@ -117,4 +130,3 @@ Dim_Date['Week_Day'] =Dim_Date['Report_Date'].dt.dayofweek + 2
 Dim_Date['Week_Day'] = np.where(Dim_Date['Week_Day'] == 8 ,1,Dim_Date['Week_Day'])
 
 Dim_Date['Day_Name'] = Dim_Date['Report_Date'].dt.day_name()
-
